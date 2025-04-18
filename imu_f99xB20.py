@@ -40,6 +40,9 @@ class IMUIf99xB20nterpreter:
         elif platform.system() == "Windows":
             # On Windows, the CH340 is typically connected to COM4
             return "COM4"
+        elif platform.system() == "Darwin":
+            # On macOS, the CH340 is typically connected to /dev/cu.wchusbserialXXXX
+            return "/dev/cu.wchusbserial110"
         else:
             # Raise an exception if the platform is not supported
             raise Exception("Unsupported platform: {}".format(platform.system()))
@@ -93,7 +96,9 @@ if __name__ == "__main__":
             print("Frame receive error!")
             break
         else:
-            data = imu.interpret_frame(uca.extract_data(uca.frame))
+            mFrame = uca.extract_data(uca.frame)
+            print(f"Frame: {mFrame}")
+            data = imu.interpret_frame(mFrame)
 
         try:
             roll, pitch, yaw = data["Roll"], data["Pitch"], data["Yaw"]
